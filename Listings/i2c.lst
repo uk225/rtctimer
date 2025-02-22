@@ -1,0 +1,107 @@
+C51 COMPILER V9.60.7.0   I2C                                                               02/22/2025 11:17:15 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN .\Objects\i2c.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE i2c.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\i2c.l
+                    -st) TABS(2) OBJECT(.\Objects\i2c.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          
+   4          sbit scl=P1^0;
+   5          sbit sda=P1^1;
+   6          
+   7          void clock()
+   8          {
+   9   1        delay(50);
+  10   1        scl=1;
+  11   1        delay(50);
+  12   1        scl=0;
+  13   1        
+  14   1      }
+  15          
+  16          void start()
+  17          {
+  18   1        scl=0;
+  19   1        sda=1;
+  20   1        delay(50);
+  21   1        scl=1;
+  22   1        delay(50);
+  23   1        sda=0;
+  24   1        delay(50);
+  25   1        scl=0;
+  26   1      }
+  27          void stop()
+  28          {
+  29   1        scl=0;
+  30   1        delay(50);
+  31   1        sda=0;
+  32   1        delay(50);
+  33   1        scl=1;
+  34   1        delay(50);
+  35   1        sda=1;
+  36   1      }
+  37          
+  38          void ack()
+  39          {
+  40   1        sda=0;
+  41   1        clock();
+  42   1        sda=1;
+  43   1      }
+  44          
+  45          void noack()
+  46          {
+  47   1        
+  48   1        sda=1;
+  49   1        clock();
+  50   1        scl=1;
+  51   1      }
+  52          
+  53          
+  54          
+C51 COMPILER V9.60.7.0   I2C                                                               02/22/2025 11:17:15 PAGE 2   
+
+  55          void writei2c(unsigned char dat)
+  56          {
+  57   1        unsigned int i;
+  58   1        for(i=0;i<8;i++)
+  59   1        {
+  60   2          sda = dat & 0x80;
+  61   2          clock();
+  62   2          dat=dat<<1;
+  63   2        }
+  64   1        sda=1;
+  65   1      }
+  66          
+  67          unsigned char readi2c(void)
+  68          {
+  69   1        unsigned char dat=0x00;
+  70   1        unsigned int i;
+  71   1        
+  72   1        sda=1;
+  73   1        for(i=0;i<8;i++)
+  74   1        {
+  75   2          scl=1;
+  76   2          dat=dat<<1;
+  77   2          dat= dat | sda;
+  78   2          scl=0;
+  79   2        }
+  80   1        return dat;
+  81   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    170    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
